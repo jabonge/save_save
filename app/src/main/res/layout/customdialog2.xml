@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/img_water_popupboxnew"
+        >
+        <TextView
+            android:id="@+id/targetusage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#747474"
+            android:lineSpacingExtra="8sp"
+            android:includeFontPadding="false"
+            android:fontFamily="@font/regular"
+
+            android:layout_marginTop="60.8dp"
+            android:layout_marginLeft="222dp"
+            android:text="22"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#747474"
+            android:lineSpacingExtra="8sp"
+            android:includeFontPadding="false"
+            android:fontFamily="@font/regular"
+
+            android:layout_marginLeft="196dp"
+            android:layout_marginTop="88.8dp"
+            android:text="23,460"
+            />
+        <ImageView
+            android:id="@+id/setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_settingpopup"
+            android:layout_marginTop="140.8dp"
+            android:layout_marginLeft="203dp"/>
+        <RelativeLayout
+            android:id="@+id/open"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="138dp"
+            android:layout_marginRight="24.5dp"
+            android:visibility="gone">
+            <EditText
+                android:id="@+id/edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginTop="-11dp"
+                android:textColor="#62cea5"
+                android:inputType="number"
+                android:hint=""
+                android:fontFamily="@font/notosanscjkkrmedium"
+                android:includeFontPadding="false"
+
+                />
+            <ImageView
+                android:layout_toRightOf="@+id/edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/txt_popup_m3"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            >
+            <ImageView
+                android:id="@+id/cancle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_cancel"/>
+            <ImageView
+                android:id="@+id/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_save"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
