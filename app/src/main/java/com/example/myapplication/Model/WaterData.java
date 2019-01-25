@@ -32,8 +32,8 @@ public class WaterData {
     @SerializedName("waterGoalPrice")
     @Expose
     public Integer waterGoalPrice;
-    @SerializedName("statusGoal")
+    @SerializedName("stateGoal")
     @Expose
-    public Integer statusGoal;
+    public Integer stateGoal;
 
 }

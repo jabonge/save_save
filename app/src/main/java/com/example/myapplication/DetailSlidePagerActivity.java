@@ -43,7 +43,10 @@ public class DetailSlidePagerActivity extends FragmentActivity {
 
 
 
+
     }
+
+
 
     private class DetailSlidePagerAdapter extends FragmentStatePagerAdapter{
 
@@ -73,6 +76,8 @@ public class DetailSlidePagerActivity extends FragmentActivity {
 //
 //            return POSITION_NONE;
 //        }
+
+
     }
 
 }

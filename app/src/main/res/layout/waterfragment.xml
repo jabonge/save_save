@@ -4,6 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <Button
+        android:id="@+id/hidbutton"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_gravity="top"
+        android:background="@android:color/transparent"/>
     <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -96,7 +105,7 @@
             android:lineSpacingExtra="14sp"
             android:includeFontPadding="false"
             android:fontFamily="@font/notosanscjkkrbold"
-            android:text="20"
+            android:text="17"
             />
         <ImageView
             android:layout_width="wrap_content"
@@ -119,7 +128,7 @@
             android:lineSpacingExtra="14sp"
             android:includeFontPadding="false"
             android:fontFamily="@font/notosanscjkkrbold"
-            android:text="21,600"
+            android:text="17,500"
             />
         <TextView
             android:id="@+id/won"
@@ -156,7 +165,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:src="@drawable/img_dotted_line"/>
+            android:src="@drawable/img_dotted_line"
+            android:visibility="invisible"/>
 
 
     </FrameLayout>
@@ -195,7 +205,7 @@
                 android:textColor="#adadad"
                 android:lineSpacingExtra="5sp"
                 android:includeFontPadding="false"
-                android:text="예상 사용량"
+                android:text="당월 예상수치"
                 android:fontFamily="@font/notosanscjkkrmedium"
                 android:layout_gravity="bottom"
                 />
@@ -274,6 +284,7 @@
         android:layout_marginRight="26dp"/>
 
 </LinearLayout>
+    </FrameLayout>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

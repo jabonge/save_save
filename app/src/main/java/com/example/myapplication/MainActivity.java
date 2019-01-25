@@ -38,16 +38,12 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.savePrice) TextView savePrice;
     @BindView(R.id.electover) ImageView electover;
     @BindView(R.id.waterover) ImageView waterover;
+    @BindView(R.id.logo) ImageView logo;
+
     APIInterface apiInterface;
     DecimalFormat myFormatter;
-//    String userName;
-//    String waterDday;
-//    String electDday;
-//    String electGoalPrice;
-//    String waterGoalPrice;
-//    String waterPrice;
-//    String electPrice;
-//    String savePrice;
+    boolean state;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +51,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main1);
         myFormatter = new DecimalFormat("###,###");
         ButterKnife.bind(this);
+        state = getIntent().getBooleanExtra("dev",false);
+
+
         request();
+        logo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                state = true;
+            }
+        });
 
         electricView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,44 +101,53 @@ public class MainActivity extends AppCompatActivity {
     }
     //메인 통신
     public void request(){
-        apiInterface = APIClient.getClient().create(APIInterface.class);
-        Call<MainModel> call = apiInterface.getmaindata();
-        call.enqueue(new Callback<MainModel>() {
-            @Override
-            public void onResponse(Call<MainModel> call, Response<MainModel> response) {
-                Log.d(TAG,response.code()+"");
-                MainModel mainModel = response.body();
-                Log.d(TAG,mainModel.message);
-                userName.setText(mainModel.maindata.userName);
-                waterDday.setText("D-"+mainModel.maindata.waterDday);
-                electDday.setText("D-"+mainModel.maindata.electDday);
-                electGoalPrice.setText(myFormatter.format(mainModel.maindata.electGoalPrice));
-                waterGoalPrice.setText(myFormatter.format(mainModel.maindata.waterGoalPrice));
-                waterPrice.setText(myFormatter.format(mainModel.maindata.waterPrice));
-                electPrice.setText(myFormatter.format(mainModel.maindata.electPrice));
-                savePrice.setText(myFormatter.format(mainModel.maindata.savePrice));
-                if(mainModel.maindata.electGoalPrice<mainModel.maindata.electPrice){
-                    electover.setVisibility(View.VISIBLE);
-                }else{
-                    electover.setVisibility(View.INVISIBLE);
+        if(state==false) {
+            apiInterface = APIClient.getClient().create(APIInterface.class);
+            Call<MainModel> call = apiInterface.getmaindata();
+            call.enqueue(new Callback<MainModel>() {
+                @Override
+                public void onResponse(Call<MainModel> call, Response<MainModel> response) {
+                    Log.d(TAG, response.code() + "");
+                    MainModel mainModel = response.body();
+                    Log.d(TAG, mainModel.message);
+                    userName.setText(mainModel.maindata.userName);
+                    waterDday.setText("D-" + mainModel.maindata.waterDday);
+                    electDday.setText("D-" + mainModel.maindata.electDday);
+                    electGoalPrice.setText(myFormatter.format(mainModel.maindata.electGoalPrice));
+                    waterGoalPrice.setText(myFormatter.format(mainModel.maindata.waterGoalPrice));
+                    waterPrice.setText(myFormatter.format(mainModel.maindata.waterPrice));
+                    electPrice.setText(myFormatter.format(mainModel.maindata.electPrice));
+                    savePrice.setText(myFormatter.format(mainModel.maindata.savePrice));
+                    if (mainModel.maindata.electGoalPrice < mainModel.maindata.electPrice) {
+                        electover.setVisibility(View.VISIBLE);
+                    } else {
+                        electover.setVisibility(View.INVISIBLE);
+                    }
+                    if (mainModel.maindata.waterGoalPrice < mainModel.maindata.waterPrice) {
+                        waterover.setVisibility(View.VISIBLE);
+                    } else {
+                        waterover.setVisibility(View.INVISIBLE);
+                    }
+
+
                 }
-                if(mainModel.maindata.waterGoalPrice<mainModel.maindata.waterPrice){
-                    waterover.setVisibility(View.VISIBLE);
-                }else{
-                    waterover.setVisibility(View.INVISIBLE);
+
+                @Override
+                public void onFailure(Call<MainModel> call, Throwable t) {
+                    Log.d(TAG, t.getMessage() + "");
+                    call.cancel();
+
+
                 }
+            });
+        }else{
+            electGoalPrice.setText("8,150");
+            electPrice.setText("6,750");
+            waterPrice.setText("17,500");
+            waterGoalPrice.setText("23,460");
+            waterover.setVisibility(View.INVISIBLE);
 
-
-            }
-
-            @Override
-            public void onFailure(Call<MainModel> call, Throwable t) {
-                Log.d(TAG,t.getMessage()+"");
-                call.cancel();
-
-
-            }
-        });
+        }
 
 
     }

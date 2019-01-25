@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.example.myapplication.Model.ElectricData;
@@ -48,6 +50,7 @@ public class Eletricfragment extends Fragment {
     @BindView(R.id.nuzin) TextView nuzin;
     @BindView(R.id.dot) ImageView dot;
     @BindView(R.id.frame) FrameLayout frameLayout;
+    @BindView(R.id.hidbutton) Button button;
     @BindView(R.id.hidden)
     Button hidden;
     @BindView(R.id.progress) RoundCornerProgressBar progressBar;
@@ -56,6 +59,7 @@ public class Eletricfragment extends Fragment {
     private Integer status;
     String sibal;
     FrameLayout.LayoutParams control;
+    private Vibrator vibrator;
 
 
 
@@ -65,9 +69,26 @@ public class Eletricfragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.electricfragment,container,false);
         ButterKnife.bind(this,rootView);
         myFormatter = new DecimalFormat("###,###");
+        vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+
+
         request();
 
 
+//        setting.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ElectricDialogFragment wdialogFragment = new ElectricDialogFragment();
+//                wdialogFragment.show(getChildFragmentManager(), "fragment_dialog_test");
+//                wdialogFragment.setDialogResult(new ElectricDialogFragment.OnMyDialogResult() {
+//                    @Override
+//                    public void finish() {
+//                        wdialogFragment.dismiss();
+//                        request();
+//                    }
+//                });
+//            }
+//        });
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,12 +97,13 @@ public class Eletricfragment extends Fragment {
                 customDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-                        Log.d("Tage","dismiss호출");
+                        Log.d("tage","dismiss");
                         request();
                     }
                 });
             }
         });
+
         renew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,19 +113,37 @@ public class Eletricfragment extends Fragment {
         hidden.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Call<ResponseBody> call = apiInterface.reset();
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.d("TAGE","초기화성공");
-                    }
+                try {
+                    Call<ResponseBody> call = apiInterface.reset();
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Log.d("TAGE", "초기화성공");
+                            vibrator.vibrate(1000);
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        call.cancel();
-                        Log.d("TAGE","초기화실패");
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            call.cancel();
+                            Log.d("TAGE", "초기화실패");
+                        }
+                    });
+                }catch (Exception e){
+                    Log.d(TAG,""+e.getMessage());
+                    Toast.makeText(getContext(), "서버 상태 이상", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBar.setMax(110);
+                progressBar.setProgress((float)105);
+
+                usage.setText("105");
+                charge.setText("7,650");
+                nuzin.setText("누진세 1단계 적용 중");
+
             }
         });
 
@@ -111,27 +151,29 @@ public class Eletricfragment extends Fragment {
 
     }
     public void request(){
-        apiInterface = APIClient.getClient().create(APIInterface.class);
-        control = (FrameLayout.LayoutParams) dot.getLayoutParams();
-        Call<EletcModel> call = apiInterface.getelectricdata(yearmonth.getText().toString());
-        call.enqueue(new Callback<EletcModel>() {
-            @Override
-            public void onResponse(Call<EletcModel> call, Response<EletcModel> response) {
-                Log.d(TAG,response.code()+"");
-                EletcModel eletcModel = response.body();
-                ElectricData electricData = eletcModel.electdata;
-                Log.d(TAG,eletcModel.message);
+        try {
+            apiInterface = APIClient.getClient().create(APIInterface.class);
+            control = (FrameLayout.LayoutParams) dot.getLayoutParams();
+            Call<EletcModel> call = apiInterface.getelectricdata(yearmonth.getText().toString());
+            call.enqueue(new Callback<EletcModel>() {
+                @Override
+                public void onResponse(Call<EletcModel> call, Response<EletcModel> response) {
+                    Log.d(TAG, response.code() + "");
+                    EletcModel eletcModel = response.body();
+                    ElectricData electricData = eletcModel.electdata;
+                    Log.d(TAG, eletcModel.message);
 
 
-                usage.setText(myFormatter.format(electricData.monthUsage));
-                charge.setText(myFormatter.format(electricData.monthUsagePrice));
-                usage3.setText(myFormatter.format(electricData.saveAmount));
-                charge3.setText(myFormatter.format(electricData.savePrice));
+                    usage.setText(myFormatter.format(electricData.monthUsage));
+                    charge.setText(myFormatter.format(electricData.monthUsagePrice));
+                    usage3.setText(myFormatter.format(electricData.saveAmount));
+                    charge3.setText(myFormatter.format(electricData.savePrice));
 
-                status = electricData.statusGoal;
-                sibal = String.valueOf(status);
-                setprogress(getbasu(electricData,sibal),sibal,electricData);
-                setnuzin(electricData);
+                    status = electricData.statusGoal;
+                    sibal = String.valueOf(status);
+                    Log.d("sisi",sibal);
+                    setprogress(getbasu(electricData, sibal), sibal, electricData);
+                    setnuzin(electricData);
 
 //                if(sibal=="0"){
 //                    if(electricData.predictionAmount<electricData.monthUsage){
@@ -178,19 +220,20 @@ public class Eletricfragment extends Fragment {
 //                }
 
 
+                }
+
+                @Override
+                public void onFailure(Call<EletcModel> call, Throwable t) {
+                    Log.d(TAG, t.getMessage() + "");
+                    call.cancel();
 
 
-
-            }
-
-            @Override
-            public void onFailure(Call<EletcModel> call, Throwable t) {
-                Log.d(TAG,t.getMessage()+"");
-                call.cancel();
-
-
-            }
-        });
+                }
+            });
+        }catch (Exception e){
+            Log.d(TAG,""+e.getMessage());
+            Toast.makeText(getContext(), "서버 상태 이상", Toast.LENGTH_SHORT).show();
+        }
 
 
     }
@@ -208,7 +251,7 @@ public class Eletricfragment extends Fragment {
         return px;
     }
     public int getbasu(ElectricData electricData,String code){
-        if(code=="0"){
+        if(code.equals("0")){
             int basu =(int) electricData.monthUsage/electricData.predictionAmount;
             return basu;
         }else{
@@ -218,8 +261,10 @@ public class Eletricfragment extends Fragment {
     }
     public void setprogress(int basu, String code, ElectricData electricData){
         float pading1;
-        if(code=="0"){
+        dot.setVisibility(View.INVISIBLE);
+        if(code.equals("0")){
             if(electricData.predictionAmount>100 ) {
+                dot.setVisibility(View.VISIBLE);
                 pading1 = 100 / (float) electricData.predictionAmount;
                 Log.d("padding",pading1+"");
                 control.leftMargin = Math.round(getPxFromDp(309*pading1));
@@ -251,6 +296,7 @@ public class Eletricfragment extends Fragment {
             charge2.setText(myFormatter.format(electricData.electGoalPrice));
             predict.setText("목표 사용량");
             if(electricData.electGoal>100 ) {
+                dot.setVisibility(View.VISIBLE);
                 pading1 = 100 / (float) electricData.electGoal;
                 Log.d("padding",pading1+"");
                 control.leftMargin = Math.round(getPxFromDp(309*pading1));
